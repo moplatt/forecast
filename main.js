@@ -68,9 +68,17 @@ async function showForecast(latlng) {
         let symbol = jsondata.properties.timeseries[i].data.next_1_hours.summary.symbol_code;
         let time = new Date(jsondata.properties.timeseries[i].time);
         markup += `<img src="icons/${symbol}.svg" style ="width:32px"
-        title="${time.toLocaleString()}">`;
-        
+        title="${time.toLocaleString()}">`;        
     }
+
+    // links zu den JSON Daten
+    markup +=`
+    <p>
+        <a href="${url}" target="forecast">Daten downloaden</a> |
+        <a href="${osmurl}" target="forecast">OSM Details zum Ort</a>
+        </p>
+        `;
+
     L.popup([
         latlng.lat, latlng.lng
     ], {

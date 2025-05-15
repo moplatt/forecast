@@ -33,15 +33,34 @@ L.control.scale({
 // MET Norway Vorhersage visualisieren
 async function showForecast(latlng) {
     //console.log("Popup erzeugen bei:", latlng);
-    let url= `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${latlng.lat}&lon=${latlng.lng}`;
+    let url = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${latlng.lat}&lon=${latlng.lng}`;
     //console.log(url);
     let response = await fetch(url);
     let jsondata = await response.json();
-    //console.log(jsondata)
+    //console.log(jsondata);
+
+    //Popup erzeugen
+    let details = jsondata.properties.timeseries[0].data.instant.details;
+    let markup = `
+        <ul>
+            <li>Luftdruck (hPa): ${details.air_pressure_at_sea_level}</li>
+            <li>Lufttemperatur (°C): ${details.air_temperature}</li>
+            <li>Bewölkungsgrad (%): ${details.cloud_area_fraction}</li>
+            <li>Luftfeuchtigkeit (%): ${details.relative_humidity}</li>
+            <li>Windrichtung (°): ${details.wind_from_direction}</li>
+            <li>Windgeschwindigkeit (km/h): ${details.wind_speed}</li>
+        </ul>
+    `
+
+    L.popup([
+        latlng.lat, latlng.lng
+    ], {
+        content: markup
+    }).openOn(overlays.forecast)
 }
 
 // auf Kartenklick reagieren
-map.on("click", function(evt) { //event listener
+map.on("click", function (evt) { //event listener
     //console.log(evt.latlng);
     showForecast(evt.latlng)
 })

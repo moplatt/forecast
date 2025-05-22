@@ -91,30 +91,29 @@ async function showWindDir() {
     let url = "https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json";
     let response = await fetch(url);
     let jsondata = await response.json();
-   // Leaflet Velocity Layer erzeugen
+    //console.log(jsondata[0].header.refTime);
+    //console.log(jsondata[0].header.forecastTime);
+   let forecastDate = new Date(jsondata[0].header.refTime);
+   forecastDate.setHours(forecastDate.getHours() + jsondata[0].header.forecastTime);
+   //console.log(forecastDate)
+
+    // Leaflet Velocity Layer erzeugen
+    let forecastSpan = document.querySelector("#forecast-link");
+    console.log(forecastSpan);
+    forecastSpan.innerHTML = `
+    (<a href="${url}" target="met.no">${forecastDate.toLocaleString()}</a>)
+    `;
+    
    let velocityLayer = L.velocityLayer({
     displayValues: true, //zeigt unten links live werte an
     displayOptions: {
         velocityType: "Wind",
-        displayPosition: "bottomleft",
+        position: "bottomright",
         emptyString: "Keine Winddaten verfügbar",
     },
     data: jsondata, // daten aus https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json
-    minVelocity: 0,
-    maxVelocity: 20,
     velocityScale: 0.015,
     lineWidth: 1.5,
-    colorScale: [
-        "#0000ff", // tiefblau
-        "#0055ff", // kräftiges blau
-        "#00ccff", // türkis
-        "#00ff66", // hellgrün
-        "#ffff00", // gelb
-        "#ff9900", // orange
-        "#ff0000", // rot
-        "#990000"  // dunkelrot (sehr stark)
-    ],
-    
     opacity: 0.97
 }).addTo(overlays.wind);
 }
